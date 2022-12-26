@@ -161,17 +161,21 @@ def doodstream(url: str) -> str:
     try:
         # Download the video using requests
         response = requests.get(result['final_url'])
-        open(f'/path/to/download/directory/{result['title']}', 'wb').write(response.content)
+        open(f'/path/to/download/directory/{result["title"]}', 'wb').write(response.content)
 
         # Log the download information
-        logger.info(f'Mulai mengunduh {result['title']}')
+        logger.info(f'Mulai mengunduh {result["title"]}')
 
         # Print the log to the console
-        print(logger.info(f'Mulai mengunduh {result['title']}'))
+        print(logger.info(f'Mulai mengunduh {result["title"]}'))
 
         # Return a string containing information about the video
         return f"id: {result['id']}\ntitle: {result['title']}\nfinal_url: {result['final_url']}\ndescription: {result['description']}\nthumbnail: {result['thumbnail']}"
-      
+    except Exception as e:
+        # Log the error
+        logger.error(f'Error downloading video: {e}')
+        raise DirectDownloadLinkException("ERROR: Tidak dapat mengunduh video")
+        
 def zippy_share(url: str) -> str:
     base_url = re_search('http.+.zippyshare.com', url).group()
     response = rget(url)
