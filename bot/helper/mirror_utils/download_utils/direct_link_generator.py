@@ -171,10 +171,6 @@ def doodstream(url: str) -> str:
 
         # Return a string containing information about the video
         return f"id: {result['id']}\ntitle: {result['title']}\nfinal_url: {result['final_url']}\ndescription: {result['description']}\nthumbnail: {result['thumbnail']}"
-    except Exception as e:
-        # Log the error
-        logger.error(f'Error downloading video: {e}')
-        raise DirectDownloadLinkException("ERROR: Tidak dapat mengunduh video")
       
 def zippy_share(url: str) -> str:
     base_url = re_search('http.+.zippyshare.com', url).group()
