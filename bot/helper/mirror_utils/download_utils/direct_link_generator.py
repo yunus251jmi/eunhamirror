@@ -8,7 +8,6 @@ from https://github.com/AvinashReddy3108/PaperplaneExtended . I hereby take no c
 than the modifications. See https://github.com/AvinashReddy3108/PaperplaneExtended/commits/master/userbot/modules/direct_links.py
 for original authorship. """
 
-import requests
 from requests import get as rget, head as rhead, post as rpost, Session as rsession
 from re import findall as re_findall, sub as re_sub, match as re_match, search as re_search
 from math import pow as math_pow, floor as math_floor
@@ -35,8 +34,6 @@ def direct_link_generator(link: str):
         return yandex_disk(link)
     elif 'mediafire.com' in link:
         return mediafire(link)
-    elif 'dood.re' in link:
-        return doodstream(link)
     elif 'zippyshare.com' in (link):
         return zippy_share(link)
     elif 'uptobox.com' in link:
@@ -137,45 +134,7 @@ def mediafire(url: str) -> str:
     page = BeautifulSoup(rget(link).content, 'lxml')
     info = page.find('a', {'aria-label': 'Download file'})
     return info.get('href')
-  
-def doodstream(url: str) -> str:
-    """ DoodStream downloader """
-    result = {}
-    try:
-        # Extract the video information using Beautiful Soup
-        page = BeautifulSoup(requests.get(link).content, 'lxml')
-        result['id'] = url.split('/')[-1]
-        result['title'] = page.find('h1', {'class': 'title'}).text
-        result['thumbnail'] = page.find('img', {'class': 'thumbnail'}).get('src')
-        result['description'] = page.find('div', {'class': 'description'}).text
 
-        # Extract the final URL for the video
-        token = page.find('input', {'name': 'token'}).get('value')
-        auth_url = page.find('input', {'name': 'auth_url'}).get('value')
-        result['final_url'] = requests.post(auth_url, data={'token': token}).json()['url']
-    except Exception as e:
-        # Log the error
-        logger.error(f'Error extracting video information: {e}')
-        raise DirectDownloadLinkException("ERROR: Tidak dapat mengambil informasi video")
-
-    try:
-        # Download the video using requests
-        response = requests.get(result['final_url'])
-        open(f'/path/to/download/directory/{result["title"]}', 'wb').write(response.content)
-
-        # Log the download information
-        logger.info(f'Mulai mengunduh {result["title"]}')
-
-        # Print the log to the console
-        print(logger.info(f'Mulai mengunduh {result["title"]}'))
-
-        # Return a string containing information about the video
-        return f"id: {result['id']}\ntitle: {result['title']}\nfinal_url: {result['final_url']}\ndescription: {result['description']}\nthumbnail: {result['thumbnail']}"
-    except Exception as e:
-        # Log the error
-        logger.error(f'Error downloading video: {e}')
-        raise DirectDownloadLinkException("ERROR: Tidak dapat mengunduh video")
-        
 def zippy_share(url: str) -> str:
     base_url = re_search('http.+.zippyshare.com', url).group()
     response = rget(url)
